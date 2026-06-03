@@ -1,0 +1,212 @@
+.loot-effect-layer {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.loot-burst {
+  position: fixed;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
+.loot-burst__screen-glow {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 120vmax;
+  height: 120vmax;
+  margin-left: -60vmax;
+  margin-top: -60vmax;
+  background: radial-gradient(
+    circle at center,
+    var(--loot-glow) 0%,
+    transparent 55%
+  );
+  opacity: 0;
+  animation: loot-screen-glow 0.9s ease-out forwards;
+}
+
+.loot-burst__beam {
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  width: var(--loot-beam-width);
+  height: var(--loot-beam-height);
+  margin-left: calc(var(--loot-beam-width) / -2);
+  background: linear-gradient(
+    to top,
+    var(--loot-color) 0%,
+    transparent 100%
+  );
+  filter: blur(1px);
+  opacity: 0;
+  transform-origin: bottom center;
+  animation: loot-beam-rise 0.55s ease-out forwards;
+}
+
+.loot-burst__radial-glow {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 3rem;
+  height: 3rem;
+  margin-left: -1.5rem;
+  margin-top: -1.5rem;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    var(--loot-color) 0%,
+    var(--loot-glow) 35%,
+    transparent 70%
+  );
+  opacity: 0;
+  animation: loot-radial-flash 0.65s ease-out forwards;
+}
+
+.loot-burst__shockwave {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 0.5rem;
+  height: 0.5rem;
+  margin-left: -0.25rem;
+  margin-top: -0.25rem;
+  border: 2px solid var(--loot-color);
+  border-radius: 50%;
+  opacity: 0;
+  animation: loot-shockwave 0.75s ease-out forwards;
+}
+
+.loot-burst__sparkle {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: var(--sparkle-size);
+  height: var(--sparkle-size);
+  margin-left: calc(var(--sparkle-size) / -2);
+  margin-top: calc(var(--sparkle-size) / -2);
+  border-radius: 50%;
+  background-color: var(--loot-color);
+  box-shadow: 0 0 6px var(--loot-glow);
+  opacity: 0;
+  animation: loot-sparkle-fly 0.7s ease-out forwards;
+  animation-delay: var(--sparkle-delay);
+  transform: rotate(var(--sparkle-angle)) translateX(0)
+    rotate(calc(-1 * var(--sparkle-angle)));
+}
+
+.loot-burst__label {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  margin-left: -50%;
+  width: max-content;
+  min-width: 4rem;
+  text-align: center;
+  font-size: 0.875rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--loot-color);
+  text-shadow:
+    0 0 8px var(--loot-glow),
+    0 2px 4px rgba(0, 0, 0, 0.8);
+  opacity: 0;
+  transform: translate(-50%, 0);
+  animation: loot-label-rise 0.9s ease-out forwards;
+}
+
+.loot-burst--legendary .loot-burst__label {
+  font-size: 1.125rem;
+  animation-duration: 1.2s;
+}
+
+@keyframes loot-beam-rise {
+  0% {
+    opacity: 0;
+    transform: scaleY(0.2);
+  }
+  25% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: scaleY(1);
+  }
+}
+
+@keyframes loot-radial-flash {
+  0% {
+    opacity: 0;
+    transform: scale(0.3);
+  }
+  30% {
+    opacity: 1;
+    transform: scale(1.2);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(2.2);
+  }
+}
+
+@keyframes loot-shockwave {
+  0% {
+    opacity: 0.9;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(14);
+  }
+}
+
+@keyframes loot-sparkle-fly {
+  0% {
+    opacity: 1;
+    transform: rotate(var(--sparkle-angle)) translateX(0)
+      rotate(calc(-1 * var(--sparkle-angle)));
+  }
+  100% {
+    opacity: 0;
+    transform: rotate(var(--sparkle-angle))
+      translateX(var(--sparkle-distance))
+      rotate(calc(-1 * var(--sparkle-angle)));
+  }
+}
+
+@keyframes loot-label-rise {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, 0.25rem) scale(0.85);
+  }
+  20% {
+    opacity: 1;
+    transform: translate(-50%, -0.5rem) scale(1.05);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -2.75rem) scale(1);
+  }
+}
+
+@keyframes loot-screen-glow {
+  0% {
+    opacity: 0;
+  }
+  25% {
+    opacity: 0.35;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .loot-effect-layer {
+    display: none;
+  }
+}
