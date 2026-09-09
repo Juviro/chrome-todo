@@ -18,7 +18,7 @@ Load the extension in Chrome:
 
 After code changes, run `npm run build` again and reload the extension.
 
-For local UI work without reloading the extension, use `npm run dev` (Vite dev server). New-tab override only works from the built `dist/` package.
+For UI work without rebuilding, `npm run dev` (Vite dev server) runs the full app in a normal browser tab, including adding, editing and completing todos — outside the extension it persists to `localStorage` instead of `chrome.storage`, so dev data stays separate from your real todos. The new-tab override itself only works from the built `dist/` package.
 
 ## Features
 

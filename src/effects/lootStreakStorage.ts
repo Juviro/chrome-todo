@@ -1,4 +1,5 @@
 import { LOOT_STREAK_STORAGE_KEY } from "../constants";
+import { storageArea } from "../storage/storageArea";
 
 export type LootStreakState = {
   day: string;
@@ -20,16 +21,9 @@ const isLootStreakState = (value: unknown): value is LootStreakState => {
 };
 
 export const loadLootStreak = (): Promise<LootStreakState | null> =>
-  new Promise((resolve) => {
-    chrome.storage.local.get(LOOT_STREAK_STORAGE_KEY, (result) => {
-      const stored = result[LOOT_STREAK_STORAGE_KEY];
-      resolve(isLootStreakState(stored) ? stored : null);
-    });
-  });
+  storageArea
+    .get(LOOT_STREAK_STORAGE_KEY)
+    .then((stored) => (isLootStreakState(stored) ? stored : null));
 
 export const saveLootStreak = (state: LootStreakState): Promise<void> =>
-  new Promise((resolve) => {
-    chrome.storage.local.set({ [LOOT_STREAK_STORAGE_KEY]: state }, () =>
-      resolve(),
-    );
-  });
+  storageArea.set(LOOT_STREAK_STORAGE_KEY, state);

@@ -8,12 +8,12 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 npm run build   # tsc -b (project refs) + vite build → dist/ ; prebuild regenerates icons
 npm run lint    # eslint (flat config, ts + react-hooks + react-refresh)
 npm run icons   # regenerate public/icons/*.png
-npm run dev     # Vite dev server — see caveat below
+npm run dev     # Vite dev server (works standalone, see Storage backend)
 ```
 
 There is no test runner and no tests. Verification is `npm run lint` + `npm run build`, plus loading `dist/` in Chrome (`chrome://extensions` → Developer mode → Load unpacked → `dist/`, then reload after each build).
 
-**`npm run dev` caveat:** the app calls `chrome.storage.local` unconditionally at startup, which is `undefined` on `http://localhost`. The dev server therefore renders only the "Loading…" screen and throws `Cannot read properties of undefined (reading 'local')`. It is useful only for editing static styles; anything touching state must be verified in the built extension.
+`npm run dev` serves the fully working app in a normal tab (see *Storage backend* below), so behaviour changes can be verified there. Only manifest-level behaviour — the new-tab override, permissions — needs the built extension.
 
 ## Architecture
 
@@ -27,6 +27,12 @@ MV3 extension with a single surface: `chrome_url_overrides.newtab` → `index.ht
 - `replaceState(next)` — wholesale swap with an immediate save; used for backup restore.
 
 `state === null` means "not loaded yet"; `App` renders the loading screen until then.
+
+### Storage backend
+
+Nothing outside `storage/storageArea.ts` may touch `chrome.storage` — it is the single place that knows which backend is in use. It exports a `{ get, set }` adapter resolved once at module load: `chrome.storage.local` when the extension API is present, `localStorage` otherwise (Vite dev server, `npm run preview`), with the same async contract so callers cannot tell them apart. The fallback logs a warning, because inside the packaged extension it would mean the `storage` permission is missing.
+
+Both persisted keys go through it: `APP_STATE_V1` (`storage/loadState.ts`, `storage/saveState.ts`) and `LOOT_STREAK_V1` (`effects/lootStreakStorage.ts`). New persisted state should follow the same shape — key in `constants.ts`, type guard next to the loader, adapter for the I/O.
 
 ### State transformers
 

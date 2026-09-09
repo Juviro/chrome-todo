@@ -1,7 +1,6 @@
 import type { AppState } from "../types";
 import { STORAGE_KEY } from "../constants";
+import { storageArea } from "./storageArea";
 
 export const saveState = (state: AppState): Promise<void> =>
-  new Promise((resolve) => {
-    chrome.storage.local.set({ [STORAGE_KEY]: state }, () => resolve());
-  });
+  storageArea.set(STORAGE_KEY, state);
