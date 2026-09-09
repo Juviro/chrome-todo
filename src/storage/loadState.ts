@@ -1,6 +1,7 @@
 import type { AppState } from "../types";
 import { STORAGE_KEY } from "../constants";
 import { createDefaultState } from "./defaults";
+import { storageArea } from "./storageArea";
 
 const isAppState = (value: unknown): value is AppState => {
   if (!value || typeof value !== "object") return false;
@@ -14,13 +15,6 @@ const isAppState = (value: unknown): value is AppState => {
 };
 
 export const loadState = (): Promise<AppState> =>
-  new Promise((resolve) => {
-    chrome.storage.local.get(STORAGE_KEY, (result) => {
-      const stored = result[STORAGE_KEY];
-      if (isAppState(stored)) {
-        resolve(stored);
-        return;
-      }
-      resolve(createDefaultState());
-    });
-  });
+  storageArea
+    .get(STORAGE_KEY)
+    .then((stored) => (isAppState(stored) ? stored : createDefaultState()));
