@@ -1,10 +1,10 @@
-import { useCallback, useRef } from "react";
+import { useCallback, useEffect, useRef } from "react";
+import { getTierForCombo, type LootTier } from "./lootTiers";
 import {
-  getTierForCombo,
-  LOOT_COMBO_IDLE_RESET_MS,
-  LOOT_COMBO_WINDOW_MS,
-  type LootTier,
-} from "./lootTiers";
+  getLocalDayKey,
+  loadLootStreak,
+  saveLootStreak,
+} from "./lootStreakStorage";
 
 export type LootStreakResult = {
   combo: number;
@@ -13,38 +13,33 @@ export type LootStreakResult = {
 
 export const useLootStreak = () => {
   const comboRef = useRef(0);
-  const lastCompletedAtRef = useRef(0);
-  const idleResetTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const dayRef = useRef(getLocalDayKey());
 
-  const clearIdleResetTimer = useCallback(() => {
-    if (idleResetTimerRef.current) {
-      clearTimeout(idleResetTimerRef.current);
-      idleResetTimerRef.current = null;
-    }
+  useEffect(() => {
+    loadLootStreak().then((stored) => {
+      const today = getLocalDayKey();
+      dayRef.current = today;
+      comboRef.current =
+        stored && stored.day === today ? stored.combo : 0;
+    });
   }, []);
 
   const registerCompletion = useCallback((): LootStreakResult => {
-    const now = Date.now();
-    const elapsed = now - lastCompletedAtRef.current;
+    const today = getLocalDayKey();
 
-    if (elapsed > LOOT_COMBO_WINDOW_MS) {
+    if (dayRef.current !== today) {
       comboRef.current = 0;
+      dayRef.current = today;
     }
 
     comboRef.current += 1;
-    lastCompletedAtRef.current = now;
-
     const combo = comboRef.current;
     const tier = getTierForCombo(combo);
 
-    clearIdleResetTimer();
-    idleResetTimerRef.current = setTimeout(() => {
-      comboRef.current = 0;
-      lastCompletedAtRef.current = 0;
-    }, LOOT_COMBO_IDLE_RESET_MS);
+    saveLootStreak({ day: today, combo });
 
     return { combo, tier };
-  }, [clearIdleResetTimer]);
+  }, []);
 
   return { registerCompletion };
 };

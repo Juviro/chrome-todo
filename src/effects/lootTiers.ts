@@ -17,8 +17,6 @@ export type LootTierConfig = {
   durationMs: number;
 };
 
-export const LOOT_COMBO_WINDOW_MS = 3000;
-export const LOOT_COMBO_IDLE_RESET_MS = 3500;
 export const LOOT_EFFECT_BASE_DURATION_MS = 1100;
 export const LOOT_EFFECT_LEGENDARY_DURATION_MS = 1800;
 
