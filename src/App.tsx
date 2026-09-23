@@ -15,7 +15,8 @@ import { CompletedHistory } from "./components/CompletedHistory";
 import "./styles/app.scss";
 
 const App = () => {
-  const { state, updateState, replaceState, isLoading } = useAppState();
+  const { state, updateState, replaceState, isLoading, syncStatus } =
+    useAppState();
   const [focusGroupId, setFocusGroupId] = useState<string | null>(null);
   const [draggingGroupId, setDraggingGroupId] = useState<string | null>(null);
 
@@ -165,7 +166,7 @@ const App = () => {
       return;
     }
     const confirmed = window.confirm(
-      "Replace all current todos and notes with this backup?",
+      "Replace all current todos and notes with this backup? This also replaces them on your other synced devices.",
     );
     if (!confirmed) return;
     replaceState(parsed);
@@ -178,6 +179,7 @@ const App = () => {
           onAddRandomTodo={handleAddRandomTodo}
           onDownloadBackup={handleDownloadBackup}
           onRestoreBackup={handleRestoreBackup}
+          syncStatus={syncStatus}
         />
         <main className="app__main">
           {state.groups.map((group) => (

@@ -65,7 +65,62 @@ body {
 .toolbar__actions {
   display: flex;
   flex-wrap: wrap;
+  align-items: center;
   gap: 0.5rem;
+}
+
+// Sits inside the actions row at a smaller size than the buttons, so it never
+// changes the toolbar height (the group-card height offset depends on it).
+.toolbar__sync {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  margin-right: 0.25rem;
+  font-size: 0.75rem;
+  color: #888;
+  cursor: default;
+}
+
+.toolbar__sync-dot {
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 50%;
+  background-color: #555;
+  transition: background-color 0.2s;
+}
+
+.toolbar__sync--synced .toolbar__sync-dot {
+  background-color: #4caf7d;
+}
+
+.toolbar__sync--syncing .toolbar__sync-dot {
+  background-color: #6aa0e6;
+  animation: toolbar-sync-pulse 1s ease-in-out infinite;
+}
+
+.toolbar__sync--retrying .toolbar__sync-dot,
+.toolbar__sync--paused-too-large .toolbar__sync-dot {
+  background-color: #d9a441;
+}
+
+.toolbar__sync--error .toolbar__sync-dot {
+  background-color: #d95c5c;
+}
+
+@keyframes toolbar-sync-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.35;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .toolbar__sync--syncing .toolbar__sync-dot {
+    animation: none;
+  }
 }
 
 .toolbar__button {
