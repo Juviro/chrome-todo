@@ -3,6 +3,7 @@ import type { AppState } from "../types";
 import { SAVE_DEBOUNCE_MS } from "../constants";
 import { loadState } from "../storage/loadState";
 import { saveState } from "../storage/saveState";
+import { useSyncEngine } from "../sync/useSyncEngine";
 
 export const useAppState = () => {
   const [state, setState] = useState<AppState | null>(null);
@@ -45,11 +46,34 @@ export const useAppState = () => {
     [],
   );
 
-  const replaceState = useCallback((next: AppState) => {
+  // Remote changes land here: immediate local save, no debounce, so the sync
+  // shadow can never be ahead of the local copy.
+  const applyRemote = useCallback(async (next: AppState) => {
     setState(next);
     stateRef.current = next;
-    saveState(next);
+    await saveState(next);
   }, []);
 
-  return { state, updateState, replaceState, isLoading: state === null };
+  const { status: syncStatus, pushNow } = useSyncEngine({
+    state,
+    applyRemote,
+  });
+
+  const replaceState = useCallback(
+    (next: AppState) => {
+      setState(next);
+      stateRef.current = next;
+      saveState(next);
+      pushNow(next);
+    },
+    [pushNow],
+  );
+
+  return {
+    state,
+    updateState,
+    replaceState,
+    isLoading: state === null,
+    syncStatus,
+  };
 };

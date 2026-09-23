@@ -22,3 +22,9 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Extension signing key (public part is in manifest.json as "key")
+*.pem
+
+# Chrome Web Store packages (built by scripts/package-extension.mjs)
+release

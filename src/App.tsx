@@ -7,18 +7,15 @@ import { deleteGroupInState } from "./history/deleteGroup";
 import { moveGroupInState } from "./groups/reorderGroups";
 import { exportBackup } from "./backup/exportBackup";
 import { parseBackupFile } from "./backup/importBackup";
-import { needsBackupReminder } from "./backup/backupReminder";
 import { markBackedUp } from "./backup/markBackedUp";
 import { Toolbar } from "./components/Toolbar";
 import { GroupCard } from "./components/GroupCard";
 import { AddGroupCard } from "./components/AddGroupCard";
 import { CompletedHistory } from "./components/CompletedHistory";
-import { BackupBanner } from "./components/BackupBanner";
 import "./styles/app.scss";
 
 const App = () => {
   const { state, updateState, replaceState, isLoading } = useAppState();
-  const [bannerDismissed, setBannerDismissed] = useState(false);
   const [focusGroupId, setFocusGroupId] = useState<string | null>(null);
   const [draggingGroupId, setDraggingGroupId] = useState<string | null>(null);
 
@@ -29,9 +26,6 @@ const App = () => {
       </div>
     );
   }
-
-  const showBackupBanner =
-    needsBackupReminder(state) && !bannerDismissed;
 
   const handleAddGroup = () => {
     const newGroup = { ...createDefaultGroup(), title: "" };
@@ -161,7 +155,6 @@ const App = () => {
   const handleDownloadBackup = () => {
     exportBackup(state);
     updateState(markBackedUp);
-    setBannerDismissed(true);
   };
 
   const handleRestoreBackup = async (file: File) => {
@@ -176,7 +169,6 @@ const App = () => {
     );
     if (!confirmed) return;
     replaceState(parsed);
-    setBannerDismissed(false);
   };
 
   return (
@@ -187,12 +179,6 @@ const App = () => {
           onDownloadBackup={handleDownloadBackup}
           onRestoreBackup={handleRestoreBackup}
         />
-        {showBackupBanner && (
-          <BackupBanner
-            onDownload={handleDownloadBackup}
-            onDismiss={() => setBannerDismissed(true)}
-          />
-        )}
         <main className="app__main">
           {state.groups.map((group) => (
             <GroupCard

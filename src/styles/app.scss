@@ -98,26 +98,6 @@ body {
   pointer-events: none;
 }
 
-.backup-banner {
-  padding: 0.875rem 1rem;
-  margin-bottom: 1.5rem;
-  background-color: #1a1a1a;
-  border: 1px solid #3d3a2e;
-  border-radius: 8px;
-}
-
-.backup-banner__text {
-  margin: 0 0 0.75rem;
-  font-size: 0.875rem;
-  color: #c9b896;
-}
-
-.backup-banner__actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-}
-
 .app__main {
   display: grid;
   grid-template-columns: repeat(3, 1fr);

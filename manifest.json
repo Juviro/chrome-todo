@@ -3,7 +3,10 @@
   "name": "Todo",
   "version": "1.0.0",
   "description": "A minimal todo list on your new tab.",
-  "permissions": ["storage"],
+  "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA6f+oOuQVo55du7KP64eW4FbAfadlINNi/ld7kBp8lkbUsEh0wKbMv7RZIA73FuPzF0dKTn/RmqPzZXk3VWvcHTDN2M4RlXFpwc3rlZLXec5lUPZuS8MKrsSEUVufUoi56P4anfKDtONKip6BoL7upYGJ09dS73GwLnErC9LCe1zNEN9Pw6mQtvUyS83SqFnOq8NsJgSOXDoVNzkmHSy93+fRw/BUPge+1UNmUfKZ0XpIbQtryPmEm+m8ir0oq40eWAsZAXGomicmGg9DXd/h1jU2KMOkoYu8mfE9XDLYRMCmiL6cLug7DbodJU4YQbW7CzFPvhgCQj4b0yECu4MgBwIDAQAB",
+  "permissions": [
+    "storage"
+  ],
   "chrome_url_overrides": {
     "newtab": "index.html"
   },

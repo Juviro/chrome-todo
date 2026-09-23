@@ -25,7 +25,6 @@ For UI work without rebuilding, `npm run dev` (Vite dev server) runs the full ap
 - Add todos with Enter; complete with checkbox (moves to recent history)
 - Multiple groups with editable titles and notes
 - Download / restore JSON backups
-- Reminder banner if no backup in 7 days
 
 ## Project structure
 

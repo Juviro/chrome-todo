@@ -23,3 +23,14 @@ export const createDefaultState = (): AppState => ({
   completedHistory: [],
   lastBackupAt: null,
 });
+
+// True for a state nobody has touched yet: the single default group, empty,
+// no history, no backup. Sync uses this to avoid pushing a duplicate «Inbox»
+// from a freshly installed device.
+export const isPristineDefaultState = (state: AppState): boolean =>
+  state.groups.length === 1 &&
+  state.groups[0].title === DEFAULT_GROUP_TITLE &&
+  state.groups[0].notes === "" &&
+  state.groups[0].todos.length === 0 &&
+  state.completedHistory.length === 0 &&
+  state.lastBackupAt === null;
