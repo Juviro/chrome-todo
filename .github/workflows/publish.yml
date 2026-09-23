@@ -1,0 +1,75 @@
+name: Build and publish
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Lint, build, package
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run build
+
+      # Version = <major>.<minor> from manifest.json + this workflow's run
+      # number, so it only ever goes up. Bump major/minor in manifest.json when
+      # you want a "real" version change. The `key` field is stripped here.
+      - name: Package for the Chrome Web Store
+        run: node scripts/package-extension.mjs --build-number ${{ github.run_number }}
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: extension-zip
+          path: release/*.zip
+          if-no-files-found: error
+
+  publish:
+    name: Upload to Chrome Web Store
+    needs: build
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    environment: chrome-web-store
+    # Never run two uploads at once; a second push waits for the first.
+    concurrency:
+      group: chrome-web-store
+      cancel-in-progress: false
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: extension-zip
+          path: release
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      # --auto-publish submits the version for review right away; the store
+      # still reviews every update before users receive it. Remove the flag
+      # to upload only and press "Publish" in the Developer Dashboard yourself.
+      - name: Upload and submit for review
+        env:
+          CWS_EXTENSION_ID: ${{ secrets.CWS_EXTENSION_ID }}
+          CWS_CLIENT_ID: ${{ secrets.CWS_CLIENT_ID }}
+          CWS_CLIENT_SECRET: ${{ secrets.CWS_CLIENT_SECRET }}
+          CWS_REFRESH_TOKEN: ${{ secrets.CWS_REFRESH_TOKEN }}
+        run: |
+          ZIP=$(ls release/*.zip | head -n 1)
+          echo "Uploading $ZIP"
+          npx --yes chrome-webstore-upload-cli@3 upload \
+            --source "$ZIP" \
+            --extension-id "$CWS_EXTENSION_ID" \
+            --client-id "$CWS_CLIENT_ID" \
+            --client-secret "$CWS_CLIENT_SECRET" \
+            --refresh-token "$CWS_REFRESH_TOKEN" \
+            --auto-publish

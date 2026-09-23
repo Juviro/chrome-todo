@@ -8,6 +8,7 @@
     "prebuild": "npm run icons",
     "dev": "vite",
     "build": "tsc -b && vite build",
+    "package": "node scripts/package-extension.mjs",
     "lint": "eslint .",
     "preview": "vite preview"
   },
