@@ -30,7 +30,7 @@ export const syncStatusLabel = (
     case "paused-too-large":
       return {
         text: "Sync paused: too large",
-        title: `Your todos and notes (${Math.round(status.bytes / 1024)} KB) exceed the 100 KB Chrome sync quota. Everything is saved locally; shorten notes or delete groups to resume syncing.`,
+        title: `Your todos and notes (${Math.round(status.bytes / 1024)} KB) exceed the 100 KB Chrome sync quota. Everything is saved locally; delete todos or groups to resume syncing.`,
       };
     case "error":
       return {

@@ -16,7 +16,6 @@ const INTERACTIVE_SELECTOR = "input, textarea, button, label, a";
 type Props = {
   group: Group;
   onTitleChange: (title: string) => void;
-  onNotesChange: (notes: string) => void;
   onAddTodo: (text: string) => void;
   onCompleteTodo: (todoId: string) => void;
   onEditTodo: (todoId: string, text: string) => void;
@@ -32,7 +31,6 @@ type Props = {
 export const GroupCard = ({
   group,
   onTitleChange,
-  onNotesChange,
   onAddTodo,
   onCompleteTodo,
   onEditTodo,
@@ -158,14 +156,6 @@ export const GroupCard = ({
           ))}
         </ul>
       )}
-      <textarea
-        className="group-card__notes"
-        value={group.notes}
-        onChange={(e) => onNotesChange(e.target.value)}
-        placeholder="Notes, links…"
-        aria-label={`Notes for ${group.title}`}
-        rows={3}
-      />
     </section>
   );
 };

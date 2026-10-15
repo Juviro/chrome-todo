@@ -41,7 +41,7 @@ The same module also exports `syncArea`, the only handle on `chrome.storage.sync
 
 ### State transformers
 
-Non-trivial mutations are pure `(prev: AppState, …args) => AppState` functions in their own module, imported into `App.tsx` and passed to `updateState`: `history/completeTodo.ts`, `history/deleteGroup.ts`, `groups/reorderGroups.ts`, `backup/markBackedUp.ts`. Trivial field edits (title, notes, add todo) are inline in `App.tsx`. Keep that split — anything with branching or cross-slice effects belongs in a module.
+Non-trivial mutations are pure `(prev: AppState, …args) => AppState` functions in their own module, imported into `App.tsx` and passed to `updateState`: `history/completeTodo.ts`, `history/deleteGroup.ts`, `groups/reorderGroups.ts`, `backup/markBackedUp.ts`. Trivial field edits (title, add todo) are inline in `App.tsx`. Keep that split — anything with branching or cross-slice effects belongs in a module.
 
 `App.tsx` is the only stateful container; components under `src/components/` are presentational and receive per-group closures as props.
 
@@ -79,13 +79,13 @@ Tier comes from a per-local-day combo counter (`useLootStreak`), persisted separ
 
 Two global SCSS files imported once (`styles/app.scss` from `App.tsx`, `styles/loot.scss` from the provider) — no CSS modules, no theme tokens, hardcoded dark-mode hex values. Class names follow BEM-ish `block__element--modifier` matching the component name.
 
-The layout is deliberately viewport-fitted: `.app__main` is a 3/2/1-column grid and group cards use a fixed `calc((100vh - 10.5rem) / 2)` height so exactly two rows fit without page scroll. Overflow is handled *inside* the card — `useScrollOverflow` sets `data-can-scroll-up/down` on the todo list, which CSS turns into fade masks. Changing card padding or toolbar height means re-checking that `10.5rem` offset.
+The layout is viewport-fitted by default: `.app__main` is a 3/2/1-column grid and group cards use `calc((100vh - 10.5rem) / 2)` as their *minimum* height so two rows fit without page scroll. Cards grow with their todos up to `$group-card-max-height` (800px), and the grid stretches every card in a row to the tallest one. Beyond the max height, overflow is handled *inside* the card — `useScrollOverflow` sets `data-can-scroll-up/down` on the todo list, which CSS turns into fade masks. Changing card padding or toolbar height means re-checking that `10.5rem` offset.
 
 ### Build specifics
 
 - `base: "./"` in `vite.config.ts` is required — extension pages need relative asset paths.
 - `manifest.json` lives at the repo root and is copied into `dist/` by `vite-plugin-static-copy`.
-- `scripts/generate-icons.mjs` hand-rolls flat-colour PNGs (own CRC32 + zlib deflate, no image deps) into `public/icons/`, wired to `prebuild`. Icons only exist because the manifest references them; regenerate rather than hand-editing.
+- `scripts/generate-icons.mjs` rasterises the extension icon into `public/icons/` (signed distance functions + supersampling, own CRC32 + zlib deflate, no image deps), wired to `prebuild`. It mirrors `public/favicon.svg` — change both together, and regenerate rather than hand-editing the PNGs.
 - `dist/` is gitignored and untracked despite being present locally.
 - `scripts/package-extension.mjs` builds the store zip from `dist/`: strips the manifest `key` (the store rejects it), optionally sets `<major>.<minor>.<build>` and, for the very first upload only, includes `key.pem`. `.github/workflows/publish.yml` runs lint → build → package on every push/PR and uploads to the Chrome Web Store on `main` via `chrome-webstore-upload-cli@3` with four `CWS_*` secrets. Setup and versioning rules live in `PUBLISHING.md`.
 

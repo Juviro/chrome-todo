@@ -144,15 +144,6 @@ const App = () => {
     }));
   };
 
-  const handleNotesChange = (groupId: string, notes: string) => {
-    updateState((prev) => ({
-      ...prev,
-      groups: prev.groups.map((g) =>
-        g.id === groupId ? { ...g, notes } : g,
-      ),
-    }));
-  };
-
   const handleDownloadBackup = () => {
     exportBackup(state);
     updateState(markBackedUp);
@@ -187,7 +178,6 @@ const App = () => {
               key={group.id}
               group={group}
               onTitleChange={(title) => handleTitleChange(group.id, title)}
-              onNotesChange={(notes) => handleNotesChange(group.id, notes)}
               onAddTodo={(text) => handleAddTodo(group.id, text)}
               onCompleteTodo={(todoId) =>
                 handleCompleteTodo(group.id, todoId)
