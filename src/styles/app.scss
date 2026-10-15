@@ -156,16 +156,18 @@ body {
 .app__main {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  align-items: start;
+  align-items: stretch;
   gap: 1.5rem;
 }
 
 $group-card-height: calc((100vh - 10.5rem) / 2);
+$group-card-max-height: 800px;
 
 .group-card {
   display: flex;
   flex-direction: column;
-  height: $group-card-height;
+  min-height: min($group-card-height, $group-card-max-height);
+  max-height: $group-card-max-height;
   padding: 1.25rem;
   background-color: #1a1a1a;
   border: 1px solid #2a2a2a;
@@ -176,7 +178,8 @@ $group-card-height: calc((100vh - 10.5rem) / 2);
   display: flex;
   align-items: center;
   justify-content: center;
-  height: $group-card-height;
+  min-height: min($group-card-height, $group-card-max-height);
+  max-height: $group-card-max-height;
   padding: 1.25rem;
   color: #555;
   background-color: transparent;
@@ -331,7 +334,7 @@ $group-card-height: calc((100vh - 10.5rem) / 2);
 .group-card__todo-list {
   flex: 1;
   min-height: 0;
-  margin: 0 0 1rem;
+  margin: 0;
   padding: 0;
   list-style: none;
   overflow-y: auto;
@@ -469,31 +472,6 @@ $group-card-height: calc((100vh - 10.5rem) / 2);
   border: 1px solid #6366f1;
   border-radius: 4px;
   outline: none;
-}
-
-.group-card__notes {
-  display: block;
-  flex-shrink: 0;
-  width: 100%;
-  margin-top: auto;
-  padding: 0.625rem 0.75rem;
-  font-family: inherit;
-  font-size: 0.875rem;
-  line-height: 1.5;
-  color: #c8c8c8;
-  background-color: #141414;
-  border: 1px solid #2a2a2a;
-  border-radius: 6px;
-  resize: none;
-  outline: none;
-}
-
-.group-card__notes::placeholder {
-  color: #555;
-}
-
-.group-card__notes:focus {
-  border-color: #444;
 }
 
 .completed-history {
